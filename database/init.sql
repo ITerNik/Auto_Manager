@@ -1,5 +1,9 @@
+---------------------------
+-- TABLES INITIALIZATION --
+---------------------------
+
 CREATE TABLE IF NOT EXISTS role (
-    role VARCHAR(16) PRIMARY KEY CHECK (role IN ('ADMIN', 'USER', 'GUEST', 'MODERATOR', 'MARKETER'))
+    role VARCHAR(16) PRIMARY KEY CHECK (role IN ('ADMIN', 'USER', 'GUEST', 'MARKETER'))
 );
 
 CREATE TABLE IF NOT EXISTS client (
@@ -10,7 +14,6 @@ CREATE TABLE IF NOT EXISTS client (
     email VARCHAR(64) NOT NULL UNIQUE,
     role VARCHAR(16) NOT NULL REFERENCES role(role),
     birthday DATE,
-    qr_code TEXT,
     is_blocked BOOLEAN DEFAULT FALSE
 );
 
@@ -22,8 +25,7 @@ CREATE TABLE IF NOT EXISTS car (
     year INT NOT NULL,
     transmission VARCHAR(32),
     fuel_type VARCHAR(32),
-    class VARCHAR(32),
-    vin VARCHAR(32) UNIQUE
+    class VARCHAR(32)
 );
 
 CREATE TABLE IF NOT EXISTS service_notification (
@@ -70,7 +72,10 @@ CREATE TABLE IF NOT EXISTS review (
     service_id UUID NOT NULL REFERENCES service(id),
     rating INT CHECK (rating BETWEEN 1 AND 5),
     comment TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    status VARCHAR(32) CHECK (status IN ('PENDING', 'PUBLISHED', 'ARCHIVED')),
+    rejection_reason TEXT
 );
 
 CREATE TABLE IF NOT EXISTS recommendation (
@@ -78,26 +83,9 @@ CREATE TABLE IF NOT EXISTS recommendation (
     user_id UUID NOT NULL REFERENCES client(id),
     car_id UUID NOT NULL REFERENCES car(id),
     text TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS support_ticket (
-    id UUID PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES client(id),
-    title VARCHAR(64) NOT NULL,
-    message TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS publication (
-    id UUID PRIMARY KEY,
-    author_id UUID NOT NULL REFERENCES client(id),
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    is_published BOOLEAN DEFAULT FALSE,
-    is_rejected BOOLEAN DEFAULT FALSE,
+    status VARCHAR(32) CHECK (status IN ('PENDING', 'PUBLISHED', 'ARCHIVED')),
     rejection_reason TEXT
 );
 
@@ -105,8 +93,6 @@ CREATE TABLE IF NOT EXISTS promotion (
     id UUID PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP NOT NULL,
     created_by UUID NOT NULL REFERENCES client(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_archived BOOLEAN DEFAULT FALSE
@@ -115,6 +101,8 @@ CREATE TABLE IF NOT EXISTS promotion (
 CREATE TABLE IF NOT EXISTS promotion_user (
     promotion_id UUID NOT NULL REFERENCES promotion(id),
     user_id UUID NOT NULL REFERENCES client(id),
+    end_date TIMESTAMP NOT NULL,
+    qr_code TEXT,
     PRIMARY KEY (promotion_id, user_id)
 );
 
@@ -125,3 +113,99 @@ CREATE TABLE IF NOT EXISTS inaccuracy (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     resolved BOOLEAN DEFAULT FALSE
 );
+
+----------------
+-- PROCEDURES --
+----------------
+
+CREATE OR REPLACE PROCEDURE update_review_status(
+    p_review_id UUID,
+    p_status VARCHAR,
+    p_rejection_reason TEXT DEFAULT NULL
+)
+    LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE review
+    SET status = p_status,
+        rejection_reason = p_rejection_reason,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_review_id;
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION assign_promotion_to_user(
+    p_promotion_id UUID,
+    p_user_id UUID,
+    p_end_date TIMESTAMP,
+    p_qr_code TEXT
+) RETURNS VOID AS $$
+BEGIN
+    INSERT INTO promotion_user (promotion_id, user_id, end_date, qr_code)
+    VALUES (p_promotion_id, p_user_id, p_end_date, p_qr_code);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE resolve_inaccuracy(
+    p_inaccuracy_id UUID
+)
+    LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE inaccuracy
+    SET resolved = TRUE
+    WHERE id = p_inaccuracy_id;
+END;
+$$;
+
+--------------------
+-- START TRIGGERS --
+--------------------
+
+CREATE OR REPLACE FUNCTION hash_password_before_insert()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.password := crypt(NEW.password, gen_salt('bf')); -- Хешируем пароль с использованием Blowfish (bcrypt)
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_insert_client
+    BEFORE INSERT ON client
+    FOR EACH ROW
+EXECUTE FUNCTION hash_password_before_insert();
+
+
+CREATE OR REPLACE FUNCTION update_review_timestamp()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_update_review
+    BEFORE UPDATE ON review
+    FOR EACH ROW
+EXECUTE FUNCTION update_review_timestamp();
+
+CREATE OR REPLACE FUNCTION prevent_client_deletion()
+    RETURNS TRIGGER AS $$
+DECLARE
+    car_count INT;
+BEGIN
+    SELECT COUNT(*) INTO car_count FROM car WHERE user_id = OLD.id;
+
+    IF car_count > 0 THEN
+        RAISE EXCEPTION 'Cannot delete user with active cars';
+    END IF;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_delete_client
+    BEFORE DELETE ON client
+    FOR EACH ROW
+EXECUTE FUNCTION prevent_client_deletion();
