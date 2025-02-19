@@ -206,7 +206,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 ----------------------------
--- INDEXES INITIALIZAYION --
+-- INDEXES INITIALIZATION --
 ----------------------------
 
 CREATE INDEX client_role_idx ON client (role);
