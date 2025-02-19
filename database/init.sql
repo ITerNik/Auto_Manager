@@ -205,7 +205,23 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER before_delete_client
-    BEFORE DELETE ON client
-    FOR EACH ROW
-EXECUTE FUNCTION prevent_client_deletion();
+----------------------------
+-- INDEXES INITIALIZAYION --
+----------------------------
+
+CREATE INDEX client_role_idx ON client (role);
+CREATE INDEX client_is_blocked_idx ON client (is_blocked);
+CREATE INDEX client_name_surname_idx ON client (name, surname);
+
+CREATE INDEX car_make_model_idx ON car (make, model);
+
+CREATE INDEX service_notification_service_type_idx ON service_notification (service_type);
+CREATE INDEX service_notification_notification_date_idx ON service_notification (notification_date);
+
+CREATE INDEX place_city_idx ON address (city);
+CREATE INDEX place_type_idx ON place (type);
+
+CREATE INDEX inaccuracy_resolved_idx ON inaccuracy (resolved);
+CREATE INDEX inaccuracy_created_at_idx ON inaccuracy (created_at);
+
+CREATE INDEX address_city_street_house_idx ON address (city, street, house);
