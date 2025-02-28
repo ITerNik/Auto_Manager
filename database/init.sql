@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS address (
     id UUID PRIMARY KEY,
     city VARCHAR(32) NOT NULL,
     street VARCHAR(32) NOT NULL,
-    house VARCHAR(10) NOT NULL
+    house INT NOT NULL,
+    building INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS place (
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS place (
     name VARCHAR(64) NOT NULL,
     address_id UUID NOT NULL REFERENCES address(id),
     type VARCHAR(32) NOT NULL CHECK (type IN ('GAS_STATION', 'ELECTRIC_REFUELING', 'CAR_WASH', 'CAR_SERVICE')),
-    contact_info TEXT
+    adress_comment TEXT
 );
 
 CREATE TABLE IF NOT EXISTS service (
