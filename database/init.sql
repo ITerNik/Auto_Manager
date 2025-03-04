@@ -61,15 +61,21 @@ CREATE TABLE IF NOT EXISTS service (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS user_favorite_service (
-    user_id UUID NOT NULL REFERENCES client(id),
+CREATE TABLE IF NOT EXISTS client_favorite_service (
+    client_id UUID NOT NULL REFERENCES client(id),
     service_id UUID NOT NULL REFERENCES service(id),
-    PRIMARY KEY (user_id, service_id)
+    PRIMARY KEY (client_id, service_id)
+);
+
+CREATE TABLE IF NOT EXISTS client_service (
+    client_id UUID NOT NULL REFERENCES client(id),
+    service_id UUID NOT NULL REFERENCES service(id),
+    PRIMARY KEY (client_id, service_id)
 );
 
 CREATE TABLE IF NOT EXISTS review (
     id UUID PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES client(id),
+    client_id UUID NOT NULL REFERENCES client(id),
     service_id UUID NOT NULL REFERENCES service(id),
     rating INT CHECK (rating BETWEEN 1 AND 5),
     comment TEXT,
@@ -99,17 +105,17 @@ CREATE TABLE IF NOT EXISTS promotion (
     is_archived BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS promotion_user (
+CREATE TABLE IF NOT EXISTS promotion_client (
+    id UUID PRIMARY KEY,
     promotion_id UUID NOT NULL REFERENCES promotion(id),
-    user_id UUID NOT NULL REFERENCES client(id),
+    client_id UUID NOT NULL REFERENCES client(id),
     end_date TIMESTAMP NOT NULL,
-    qr_code TEXT,
-    PRIMARY KEY (promotion_id, user_id)
+    qr_code TEXT
 );
 
 CREATE TABLE IF NOT EXISTS inaccuracy (
     id UUID PRIMARY KEY,
-    reporter_id UUID NOT NULL REFERENCES client(id),
+    client_id UUID NOT NULL REFERENCES client(id),
     description TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     resolved BOOLEAN DEFAULT FALSE
@@ -138,13 +144,13 @@ $$;
 
 CREATE OR REPLACE FUNCTION assign_promotion_to_user(
     p_promotion_id UUID,
-    p_user_id UUID,
+    p_client_id UUID,
     p_end_date TIMESTAMP,
     p_qr_code TEXT
 ) RETURNS VOID AS $$
 BEGIN
-    INSERT INTO promotion_user (promotion_id, user_id, end_date, qr_code)
-    VALUES (p_promotion_id, p_user_id, p_end_date, p_qr_code);
+    INSERT INTO promotion_client (promotion_id, client_id, end_date, qr_code)
+    VALUES (p_promotion_id, p_client_id, p_end_date, p_qr_code);
 END;
 $$ LANGUAGE plpgsql;
 
