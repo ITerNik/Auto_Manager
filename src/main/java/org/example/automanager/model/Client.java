@@ -44,9 +44,11 @@ public class Client implements UserDetails {
     @Enumerated(EnumType.STRING)  // Store the Enum's name as a String
     private Role role;
 
+    @Builder.Default
     @Column(name = "birthday")
     private LocalDateTime birthday = LocalDateTime.MIN;
 
+    @Builder.Default
     @Column(name = "is_blocked", nullable = false)
     private Boolean isBlocked = false; // Default value
 
