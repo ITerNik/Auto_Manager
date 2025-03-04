@@ -1,5 +1,6 @@
 package org.example.automanager.controllers;
 
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.automanager.dto.auth.JwtAuthenticationResponse;

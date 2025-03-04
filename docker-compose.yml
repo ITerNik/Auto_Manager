@@ -1,11 +1,4 @@
 services:
-  app:
-    build: ./app
-    depends_on:
-      - postgres
-    restart: on-failure
-    ports:
-      - "8080:8080"
   minio:
     image: minio/minio:latest
     command: server --console-address ":9001" /data/
