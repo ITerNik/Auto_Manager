@@ -6,16 +6,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JwtConfig {
     @Value("${token.signing.key}")
-    private static String jwtSigningKey;
+    private String jwtSigningKey;
 
     @Value("${token.expire}")
-    private static int jwtExpirationMs;
+    private int jwtExpirationMs;
 
-    public static String getJwtSigningKey() {
+    public  String getJwtSigningKey() {
         return jwtSigningKey;
     }
 
-    public static int getJwtExpirationMs() {
+    public int getJwtExpirationMs() {
         return jwtExpirationMs;
     }
 }

@@ -36,10 +36,10 @@ public class SecurityConfiguration {
                 // Своего рода отключение CORS (разрешение запросов со всех доменов)
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOriginPatterns(List.of("localhost:3000", "127.0.0.1:3000"));
+                    corsConfiguration.setAllowedOriginPatterns(List.of("*"));
                     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
                     corsConfiguration.setAllowedHeaders(List.of("*"));
-                    corsConfiguration.setAllowCredentials(true);
+                    //corsConfiguration.setAllowCredentials(true);
                     return corsConfiguration;
                 }))
                 // Настройка доступа к конечным точкам

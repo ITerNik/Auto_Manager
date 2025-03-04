@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.example.automanager.model.Client;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class JwtService {
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
+    @Autowired
+    public JwtConfig jwtConfig;
 
     /**
      * Генерация токена
@@ -79,7 +83,7 @@ public class JwtService {
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(new Date().getTime() + JwtConfig.getJwtExpirationMs()))
+                .setExpiration(new Date(new Date().getTime() + jwtConfig.getJwtExpirationMs()))
                 .signWith(SignatureAlgorithm.HS256, getSigningKey()).compact();
     }
 
@@ -122,7 +126,7 @@ public class JwtService {
      * @return ключ
      */
     private Key getSigningKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(JwtConfig.getJwtSigningKey());
+        byte[] keyBytes = Base64.getDecoder().decode(jwtConfig.getJwtSigningKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
