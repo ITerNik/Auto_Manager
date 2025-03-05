@@ -7,10 +7,8 @@ import org.example.automanager.dto.auth.JwtAuthenticationResponse;
 import org.example.automanager.dto.auth.SignInRequest;
 import org.example.automanager.dto.auth.SignUpRequest;
 import org.example.automanager.security.auth.AuthenticationService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -26,5 +24,10 @@ public class AuthController {
     @PostMapping("/sign-in")
     public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) {
         return authenticationService.signIn(request);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handler(Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
