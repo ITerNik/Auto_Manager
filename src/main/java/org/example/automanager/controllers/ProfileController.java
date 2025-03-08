@@ -2,6 +2,7 @@ package org.example.automanager.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.automanager.dto.auth.ClientInfoResponse;
 import org.example.automanager.dto.profile.EditProfileRequest;
 import org.example.automanager.model.Client;
 import org.example.automanager.security.auth.AuthenticationService;
@@ -19,6 +20,13 @@ public class ProfileController {
     private final ClientService clientService;
     private final AuthenticationService authenticationService;
 
+    @GetMapping("/")
+    public ResponseEntity<ClientInfoResponse> getClientInfo(@RequestHeader("Authorization") String jwt) {
+        String token = jwt.substring(7);
+        ClientInfoResponse info = authenticationService.getClientInfo(token);
+        return ResponseEntity.ok().body(info);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteClient(@PathVariable("id") UUID uuid) {
         clientService.deleteClient(uuid);
@@ -34,7 +42,10 @@ public class ProfileController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> editProfile(@PathVariable("id") UUID uuid,@RequestBody @Valid EditProfileRequest request) {
+    public ResponseEntity<String> editProfile(
+            @PathVariable("id") UUID uuid,
+            @RequestBody @Valid EditProfileRequest request
+    ) {
         authenticationService.updateClientInfo(uuid, request);
         return ResponseEntity.ok().body("Success!");
     }

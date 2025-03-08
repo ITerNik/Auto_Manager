@@ -2,6 +2,7 @@ package org.example.automanager.security.auth;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.automanager.dto.auth.ClientInfoResponse;
 import org.example.automanager.dto.auth.JwtAuthenticationResponse;
 import org.example.automanager.dto.auth.SignInRequest;
 import org.example.automanager.dto.auth.SignUpRequest;
@@ -89,5 +90,18 @@ public class AuthenticationService {
         if (newBirthday != null) client.setBirthday(newBirthday);
 
         clientService.save(client);
+    }
+
+    public ClientInfoResponse getClientInfo(String token) {
+        String email = jwtService.extractUserName(token);
+        Client client = clientService.getByUsername(email);
+
+        return ClientInfoResponse.builder()
+                .id(client.getId())
+                .email(email)
+                .name(client.getName())
+                .surname(client.getSurname())
+                .birthday(client.getBirthday())
+                .build();
     }
 }

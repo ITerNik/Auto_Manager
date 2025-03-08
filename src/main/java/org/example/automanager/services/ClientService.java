@@ -2,25 +2,21 @@ package org.example.automanager.services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.automanager.dto.profile.EditProfileRequest;
+import org.example.automanager.dto.auth.ClientInfoResponse;
 import org.example.automanager.model.Client;
 import org.example.automanager.model.Role;
 import org.example.automanager.repository.ClientRepository;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService {
     private final ClientRepository clientRepository;
-    //private final PasswordEncoder passwordEncoder;
 
     /**
      * Сохранение пользователя
@@ -42,16 +38,14 @@ public class ClientService {
 
     /**
      * Создание пользователя
-     *
-     * @return созданный пользователь
      */
-    public Client create(Client client) {
+    public void create(Client client) {
         if (clientRepository.existsByEmail(client.getUsername())) {
             // Заменить на свои исключения
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
 
-        return save(client);
+        save(client);
     }
 
     /**
