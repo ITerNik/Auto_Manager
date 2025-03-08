@@ -7,6 +7,7 @@ import org.example.automanager.dto.auth.SignUpRequest;
 import org.example.automanager.model.Client;
 import org.example.automanager.model.Role;
 import org.example.automanager.security.jwt.JwtService;
+import org.example.automanager.services.ClientService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;

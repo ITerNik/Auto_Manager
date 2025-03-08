@@ -2,10 +2,8 @@ package org.example.automanager.services;
 
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
-import io.minio.PutObjectArgs;
 import io.minio.MinioClient;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import io.minio.PutObjectArgs;
 import org.example.automanager.utils.MinioConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

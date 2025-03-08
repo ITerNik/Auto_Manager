@@ -2,7 +2,7 @@ package org.example.automanager.configs;
 
 import lombok.RequiredArgsConstructor;
 import org.example.automanager.model.Role;
-import org.example.automanager.security.auth.ClientService;
+import org.example.automanager.services.ClientService;
 import org.example.automanager.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
