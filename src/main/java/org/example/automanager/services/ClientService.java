@@ -1,5 +1,6 @@
-package org.example.automanager.security.auth;
+package org.example.automanager.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.automanager.model.Client;
 import org.example.automanager.model.Role;
@@ -8,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,15 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
+    /**
+     * Удаление пользователя
+     *
+     */
+    @Transactional
+    public void deleteClient(UUID uuid) {
+        clientRepository.deleteById(uuid);
+    }
+
 
     /**
      * Создание пользователя
@@ -32,10 +44,6 @@ public class ClientService {
     public Client create(Client client) {
         if (clientRepository.existsByEmail(client.getUsername())) {
             // Заменить на свои исключения
-            throw new RuntimeException("Пользователь с таким именем уже существует");
-        }
-
-        if (clientRepository.existsByEmail(client.getEmail())) {
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
 
@@ -49,6 +57,12 @@ public class ClientService {
      */
     public Client getByUsername(String email) {
         return clientRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+
+    }
+
+    public Client getById(UUID uuid) {
+        return clientRepository.findById(uuid)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
     }

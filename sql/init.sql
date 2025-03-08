@@ -26,6 +26,13 @@ CREATE TABLE IF NOT EXISTS car (
     class VARCHAR(32)
 );
 
+CREATE TABLE IF NOT EXISTS client_car
+(
+    client_id UUID NOT NULL REFERENCES client(id),
+    car_id UUID NOT NULL REFERENCES car(id),
+    PRIMARY KEY (client_id, car_id)
+);
+
 CREATE TABLE IF NOT EXISTS service_notification (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES client(id),
