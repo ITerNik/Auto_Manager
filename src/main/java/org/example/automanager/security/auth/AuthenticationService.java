@@ -1,9 +1,11 @@
 package org.example.automanager.security.auth;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.automanager.dto.auth.JwtAuthenticationResponse;
 import org.example.automanager.dto.auth.SignInRequest;
 import org.example.automanager.dto.auth.SignUpRequest;
+import org.example.automanager.dto.profile.EditProfileRequest;
 import org.example.automanager.model.Client;
 import org.example.automanager.model.Role;
 import org.example.automanager.security.jwt.JwtService;
@@ -12,6 +14,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -61,5 +66,28 @@ public class AuthenticationService {
 
         var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt);
+    }
+
+    @Transactional
+    public void updateClientInfo(UUID uuid, EditProfileRequest request) {
+        String newName = request.getName();
+        LocalDateTime newBirthday = request.getBirthday();
+        String newSurname = request.getSurname();
+        String newPassword = request.getNewPassword();
+        String oldPassword = request.getPassword();
+        Client client = clientService.getById(uuid);
+
+        if (newPassword != null && oldPassword != null) {
+            if (!passwordEncoder.matches(oldPassword, client.getPassword()))
+                throw new IllegalArgumentException("Password is incorrect!");
+
+            client.setPassword(passwordEncoder.encode(oldPassword));
+        }
+
+        if (newSurname != null) client.setSurname(newSurname);
+        if (newName != null) client.setName(newName);
+        if (newBirthday != null) client.setBirthday(newBirthday);
+
+        clientService.save(client);
     }
 }

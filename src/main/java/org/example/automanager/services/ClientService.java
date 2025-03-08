@@ -2,20 +2,25 @@ package org.example.automanager.services;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.automanager.dto.profile.EditProfileRequest;
 import org.example.automanager.model.Client;
 import org.example.automanager.model.Role;
 import org.example.automanager.repository.ClientRepository;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService {
     private final ClientRepository clientRepository;
+    //private final PasswordEncoder passwordEncoder;
 
     /**
      * Сохранение пользователя
@@ -28,7 +33,6 @@ public class ClientService {
 
     /**
      * Удаление пользователя
-     *
      */
     @Transactional
     public void deleteClient(UUID uuid) {

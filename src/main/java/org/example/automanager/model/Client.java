@@ -19,6 +19,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "client")
