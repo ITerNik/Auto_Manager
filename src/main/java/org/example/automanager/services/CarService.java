@@ -3,7 +3,6 @@ package org.example.automanager.services;
 import lombok.RequiredArgsConstructor;
 import org.example.automanager.model.Car;
 import org.example.automanager.model.Client;
-import org.example.automanager.security.auth.ClientService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
