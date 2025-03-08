@@ -17,13 +17,19 @@ CREATE TABLE IF NOT EXISTS client (
 
 CREATE TABLE IF NOT EXISTS car (
     id UUID PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES client(id),
     make VARCHAR(32) NOT NULL,
     model VARCHAR(32) NOT NULL,
     year INT NOT NULL,
     transmission VARCHAR(32),
     fuel_type VARCHAR(32),
     class VARCHAR(32)
+);
+
+CREATE TABLE IF NOT EXISTS client_car
+(
+    client_id UUID NOT NULL REFERENCES client(id),
+    car_id UUID NOT NULL REFERENCES car(id),
+    PRIMARY KEY (client_id, car_id)
 );
 
 CREATE TABLE IF NOT EXISTS service_notification (
