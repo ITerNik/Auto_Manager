@@ -31,7 +31,4 @@ public class Car {
 
     @Column(name = "year", nullable = false)
     private int year;
-
-    @ManyToMany(mappedBy = "cars")
-    private Set<Client> clients;
 }

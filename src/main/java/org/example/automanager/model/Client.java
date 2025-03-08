@@ -1,5 +1,6 @@
 package org.example.automanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -52,6 +53,7 @@ public class Client implements UserDetails {
     private Boolean isBlocked = false; // Default value
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "client_service", // The name of the join table
             joinColumns = @JoinColumn(name = "client_id"), // Column in join table referencing Client
@@ -60,6 +62,7 @@ public class Client implements UserDetails {
     private Set<Service> services;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "client_favorite_service", // The name of the join table
             joinColumns = @JoinColumn(name = "client_id"), // Column in join table referencing Client

@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS client (
 
 CREATE TABLE IF NOT EXISTS car (
     id UUID PRIMARY KEY,
-    user_id UUID NOT NULL REFERENCES client(id),
     make VARCHAR(32) NOT NULL,
     model VARCHAR(32) NOT NULL,
     year INT NOT NULL,
