@@ -2,6 +2,8 @@ import { Button, Container, Typography } from "@mui/material";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { ErrorPage } from "./pages/error";
 import { ProfilePage } from "./pages/profile";
+import {AuthPage} from "./pages/auth";
+import {ProtectedRoute} from "./pages/auth/ProtectedRoute.tsx";
 
 const App = () => <RouterProvider router={router} />;
 
@@ -25,12 +27,22 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "",
-        element: <Page />,
+        path: '/auth',
+        element: <AuthPage />
       },
       {
-        path: "/profile",
-        element: <ProfilePage />,
+        path: "",
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "",
+            element: <Page />,
+          },
+          {
+            path: "/profile",
+            element: <ProfilePage />,
+          },
+        ]
       },
     ],
   },

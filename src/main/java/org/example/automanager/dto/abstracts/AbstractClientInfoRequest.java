@@ -9,11 +9,11 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractClientInfoRequest {
     @Size(min = 2, max = 32, message = "Имя пользователя должно содержать от 2 до 32 символов")
-    @NotBlank(message = "Имя пользователя не может быть пустыми")
+//    @NotBlank(message = "Имя пользователя не может быть пустыми")
     private String name;
 
     @Size(min = 2, max = 32, message = "Фамилия пользователя должно содержать от 2 до 32 символов")
-    @NotBlank(message = "Фамилия пользователя не может быть пустыми")
+//    @NotBlank(message = "Фамилия пользователя не может быть пустыми")
     private String surname;
 
     @Size(max = 64, message = "Длина пароля должна быть не более 64 символов")

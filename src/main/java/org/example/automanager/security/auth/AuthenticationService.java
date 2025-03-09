@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -77,7 +78,7 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Something went wrong!");
 
         String newName = request.getName();
-        LocalDateTime newBirthday = request.getBirthday();
+        LocalDate newBirthday = request.getBirthday();
         String newSurname = request.getSurname();
         String newPassword = request.getNewPassword();
         String oldPassword = request.getPassword();

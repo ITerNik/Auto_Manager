@@ -6,14 +6,14 @@ import { ProfileField } from "../../components/fields/ProfileField.tsx";
 import {APIService} from "../../../network/api.ts";
 
 interface ProfileForm {
-  firstName: string;
-  lastName: string;
+  name: string;
+  surname: string;
   email: string;
-  birthDate: string;
+  birthday: string;
 }
 
 interface PasswordForm {
-  oldPassword: string;
+  password: string;
   newPassword: string;
   confirmPassword: string;
 }
@@ -45,26 +45,30 @@ const EditingButtonsBlock = ({
 };
 
 export const ProfilePage = () => {
+  const [userData, setUserData] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
+  const api = new APIService();
+
   useEffect(() => {
-    localStorage.setItem('token', '')
-    new APIService().getUserInfo().then(res => res.data).then(console.log)
+    api.getUserInfo().then(res => res.data)
+            .then(setUserData)
   }, []);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors , dirtyFields},
     watch,
   } = useForm<ProfileForm>({
     defaultValues: {
-      firstName: "Иван",
-      lastName: "Иванов",
+      name: "Иван",
+      surname: "Иванов",
       email: "ivan@example.com",
-      birthDate: "1990-05-15",
+      birthday: "1990-05-15",
     },
+    values: userData,
   });
 
   const {
@@ -76,7 +80,8 @@ export const ProfilePage = () => {
   } = useForm<PasswordForm>();
 
   const onSubmit = (data: ProfileForm) => {
-    console.log("Обновленные данные:", data);
+    const dirty = Object.fromEntries(Object.entries(data).filter(([key, _]) => Boolean(dirtyFields[key])));
+    api.editUserInfo(userData.id, dirty);
     enableEditing(false);
   };
 
@@ -85,7 +90,8 @@ export const ProfilePage = () => {
       alert("Пароли не совпадают!");
       return;
     }
-    console.log("Смена пароля:", data);
+    const {confirmPassword, ...dataNeed} = data;
+    api.editUserInfo(userData.id, dataNeed);
     enablePasswordEditing(false);
   };
 
@@ -115,20 +121,20 @@ export const ProfilePage = () => {
           <Box component="form" onSubmit={handleSubmit(onSubmit)}>
             <ProfileField
               label="Имя"
-              name="firstName"
-              value={watch("firstName")}
+              name="name"
+              value={watch("name")}
               isEditing={isEditing}
-              register={register("firstName", { required: "Введите имя" })}
-              error={errors.firstName?.message}
+              register={register("name", { required: "Введите имя" })}
+              error={errors.name?.message}
             />
 
             <ProfileField
               label="Фамилия"
-              name="lastName"
-              value={watch("lastName")}
+              name="surname"
+              value={watch("surname")}
               isEditing={isEditing}
-              register={register("lastName", { required: "Введите фамилию" })}
-              error={errors.lastName?.message}
+              register={register("surname", { required: "Введите фамилию" })}
+              error={errors.surname?.message}
             />
 
             <ProfileField
@@ -149,13 +155,13 @@ export const ProfilePage = () => {
 
             <ProfileField
               label="Дата рождения"
-              name="birthDate"
-              value={watch("birthDate")}
+              name="birthday"
+              value={watch("birthday")}
               isEditing={isEditing}
-              register={register("birthDate", {
+              register={register("birthday", {
                 required: "Выберите дату рождения",
               })}
-              error={errors.birthDate?.message}
+              error={errors.birthday?.message}
               type="date"
             />
 
@@ -200,12 +206,12 @@ export const ProfilePage = () => {
             <ProfileField
               label="Старый пароль"
               type="password"
-              register={registerPassword("oldPassword", {
+              register={registerPassword("password", {
                 required: "Введите старый пароль",
               })}
-              error={passwordErrors.oldPassword?.message}
-              name="oldPassword"
-              value={watchPassword("oldPassword")}
+              error={passwordErrors.password?.message}
+              name="password"
+              value={watchPassword("password")}
               isEditing={isChangingPassword}
             />
 
