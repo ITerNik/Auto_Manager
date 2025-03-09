@@ -1,8 +1,9 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import { Button, Container, Typography, Box, Avatar } from "@mui/material";
 import { AccountCircle } from "@mui/icons-material";
 import { ProfileField } from "../../components/fields/ProfileField.tsx";
+import {APIService} from "../../../network/api.ts";
 
 interface ProfileForm {
   firstName: string;
@@ -47,6 +48,11 @@ export const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
+  useEffect(() => {
+    localStorage.setItem('token', '')
+    new APIService().getUserInfo().then(res => res.data).then(console.log)
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -81,7 +87,6 @@ export const ProfilePage = () => {
     }
     console.log("Смена пароля:", data);
     enablePasswordEditing(false);
-    resetPasswordForm();
   };
 
   const enableEditing = (enable: boolean) => {
@@ -90,6 +95,7 @@ export const ProfilePage = () => {
   };
 
   const enablePasswordEditing = (enable: boolean) => {
+    resetPasswordForm();
     setIsEditing(false);
     setIsChangingPassword(enable);
   };
