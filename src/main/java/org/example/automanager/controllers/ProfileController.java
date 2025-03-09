@@ -23,30 +23,35 @@ public class ProfileController {
     @GetMapping("/")
     public ResponseEntity<ClientInfoResponse> getClientInfo(@RequestHeader("Authorization") String jwt) {
         String token = jwt.substring(7);
-        ClientInfoResponse info = authenticationService.getClientInfo(token);
+        ClientInfoResponse info = authenticationService.getClientInfoByJwtToken(token);
         return ResponseEntity.ok().body(info);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteClient(@PathVariable("id") UUID uuid) {
-        clientService.deleteClient(uuid);
+    public ResponseEntity<String> deleteClient(
+            @PathVariable("id") UUID uuid,
+            @RequestHeader("Authorization") String jwt
+    ) {
+        clientService.deleteClient(uuid, jwt);
         return ResponseEntity.ok().body("Success!");
-        //else return ResponseEntity.badRequest().body("Something went wrong!");
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getClientInfo(@PathVariable("id") UUID uuid) {
-        Client client = clientService.getById(uuid);
-
+    public ResponseEntity<String> getClientInfo(
+            @PathVariable("id") UUID uuid,
+            @RequestHeader("Authorization") String jwt
+    ) {
+        Client client = clientService.getClientInfoById(uuid, jwt);
         return ResponseEntity.ok().body(client.toString());
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<String> editProfile(
             @PathVariable("id") UUID uuid,
-            @RequestBody @Valid EditProfileRequest request
+            @RequestBody @Valid EditProfileRequest request,
+            @RequestHeader("Authorization") String jwt
     ) {
-        authenticationService.updateClientInfo(uuid, request);
+        authenticationService.updateClientInfo(uuid, request, jwt);
         return ResponseEntity.ok().body("Success!");
     }
 

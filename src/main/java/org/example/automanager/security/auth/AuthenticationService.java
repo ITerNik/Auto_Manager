@@ -70,7 +70,12 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void updateClientInfo(UUID uuid, EditProfileRequest request) {
+    public void updateClientInfo(UUID uuid, EditProfileRequest request, String token) {
+        token = token.substring(7);
+        String email = jwtService.extractUserName(token);
+        if (!clientService.getByUsername(email).getId().equals(uuid))
+            throw new IllegalArgumentException("Something went wrong!");
+
         String newName = request.getName();
         LocalDateTime newBirthday = request.getBirthday();
         String newSurname = request.getSurname();
@@ -92,7 +97,7 @@ public class AuthenticationService {
         clientService.save(client);
     }
 
-    public ClientInfoResponse getClientInfo(String token) {
+    public ClientInfoResponse getClientInfoByJwtToken(String token) {
         String email = jwtService.extractUserName(token);
         Client client = clientService.getByUsername(email);
 

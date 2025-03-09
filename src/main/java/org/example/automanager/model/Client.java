@@ -108,4 +108,8 @@ public class Client implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void removeCarById(UUID carId) {
+        cars.removeIf(car -> car.getId().equals(carId));
+    }
 }
