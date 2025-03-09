@@ -16,6 +16,5 @@ public class EditProfileRequest extends AbstractClientInfoRequest {
     private LocalDateTime birthday;
 
     @Size(max = 64, message = "Длина пароля должна быть не более 64 символов")
-    @JsonProperty("new_password")
     private String newPassword;
 }

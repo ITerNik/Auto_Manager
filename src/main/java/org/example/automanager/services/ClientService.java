@@ -6,6 +6,7 @@ import org.example.automanager.dto.auth.ClientInfoResponse;
 import org.example.automanager.model.Client;
 import org.example.automanager.model.Role;
 import org.example.automanager.repository.ClientRepository;
+import org.example.automanager.security.jwt.JwtService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final JwtService jwtService;
 
     /**
      * Сохранение пользователя
@@ -65,6 +67,10 @@ public class ClientService {
 
     }
 
+    public void removeClientCarById(UUID carId) {
+        getCurrentUser().removeCarById(carId);
+    }
+
     /**
      * Получение пользователя по имени пользователя
      * <p>
@@ -87,6 +93,10 @@ public class ClientService {
         return getByUsername(username);
     }
 
+    public UUID getCurrentUserId() {
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByUsername(username).getId();
+    }
 
     /**
      * Выдача прав администратора текущему пользователю
@@ -98,5 +108,23 @@ public class ClientService {
         var client = getCurrentUser();
         client.setRole(Role.ADMIN);
         save(client);
+    }
+
+    public boolean checkValidClient(UUID uuid, String token) {
+        token = token.substring(7);
+        String email = jwtService.extractUserName(token);
+        return getByUsername(email).getId().equals(uuid);
+    }
+
+    public void deleteClient(UUID uuid, String token) {
+        if (checkValidClient(uuid, token))
+            deleteClient(uuid);
+        throw new IllegalArgumentException("Something went wrong!");
+    }
+
+    public Client getClientInfoById(UUID uuid, String token) {
+        if (checkValidClient(uuid, token))
+            return getById(uuid);
+        throw new IllegalArgumentException("Something went wrong!");
     }
 }
