@@ -22,8 +22,8 @@ public class CarService {
     }
 
     public List<Car> getUserCars() {
-        Client editedCar = clientService.getCurrentUser();
-        return editedCar.getCars().stream().toList();
+        Client client = clientService.getCurrentUser();
+        return client.getCars().stream().toList();
     }
 
     private boolean checkValidClientAndCar(UUID clientId, UUID carId, String token) {
@@ -42,7 +42,6 @@ public class CarService {
             String car = request.getCar();
             String carModel = request.getCarModel();
             String carColor = request.getCarColor();
-            Integer carModelYear = request.getCarModelYear();
             String carVin = request.getCarVin();
             String fuelType = request.getFuelType();
             String transmission = request.getTransmission();
@@ -50,7 +49,6 @@ public class CarService {
             if (car != null) editedCar.setCar(car);
             if (carModel != null) editedCar.setCarModel(carModel);
             if (carColor != null) editedCar.setCarColor(carColor);
-            if (carModelYear != null) editedCar.setCarModelYear(carModelYear);
             if (carVin != null) editedCar.setCarVin(carVin);
             if (fuelType != null) editedCar.setFuelType(fuelType);
             if (transmission != null) editedCar.setTransmission(transmission);
@@ -72,7 +70,6 @@ public class CarService {
                     .car(request.getCar())
                     .carColor(request.getCarColor())
                     .carModel(request.getCarModel())
-                    .carModelYear(request.getCarModelYear())
                     .transmission(request.getTransmission())
                     .carVin(request.getCarVin())
                     .fuelType(request.getFuelType())

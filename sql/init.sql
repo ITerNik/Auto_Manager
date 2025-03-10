@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS client
     role       VARCHAR(16) NOT NULL,
     birthday   DATE,
     is_blocked BOOLEAN
-    );
+);
 
 CREATE TABLE IF NOT EXISTS car
 (
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS car
     fuel_type    VARCHAR(32),
     transmission VARCHAR(32),
     PRIMARY KEY (id)
-    );
+);
 
 
 CREATE TABLE IF NOT EXISTS client_car
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS client_car
     client_id UUID NOT NULL REFERENCES client (id),
     car_id    UUID NOT NULL REFERENCES car (id),
     PRIMARY KEY (client_id, car_id)
-    );
+);
 
 CREATE TABLE IF NOT EXISTS service_notification
 (
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS service_notification
     notification_date TIMESTAMP   NOT NULL,
     created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     comment           TEXT
-    );
+);
 
 CREATE TABLE IF NOT EXISTS address
 (
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS address
     city   VARCHAR(32),
     street VARCHAR(32) NOT NULL,
     house  VARCHAR(32) NOT NULL
-    );
+);
 
 CREATE TABLE IF NOT EXISTS place
 (
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS place
     address_id      UUID        NOT NULL REFERENCES address (id),
     type            VARCHAR(32) NOT NULL CHECK (type IN ('Электрическая заправка', 'Автосервис', 'Автомойка', 'Заправка')),
     address_comment TEXT
-    );
+);
 
 CREATE TABLE IF NOT EXISTS service
 (
@@ -73,21 +73,21 @@ CREATE TABLE IF NOT EXISTS service
     service_type VARCHAR(32) NOT NULL CHECK (service_type IN ('MAINTENANCE', 'WASH', 'TIRE_CHANGE', 'OIL_CHANGE')),
     description  TEXT,
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+);
 
 CREATE TABLE IF NOT EXISTS client_favorite_service
 (
     client_id  UUID NOT NULL REFERENCES client (id),
     service_id UUID NOT NULL REFERENCES service (id),
     PRIMARY KEY (client_id, service_id)
-    );
+);
 
 CREATE TABLE IF NOT EXISTS client_service
 (
     client_id  UUID NOT NULL REFERENCES client (id),
     service_id UUID NOT NULL REFERENCES service (id),
     PRIMARY KEY (client_id, service_id)
-    );
+);
 
 CREATE TABLE IF NOT EXISTS review
 (
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS review
     updated_at       TIMESTAMP,
     status           VARCHAR(32) CHECK (status IN ('PENDING', 'PUBLISHED', 'ARCHIVED')),
     rejection_reason TEXT
-    );
+);
 
 CREATE TABLE IF NOT EXISTS recommendation
 (
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS recommendation
     updated_at       TIMESTAMP,
     status           VARCHAR(32) CHECK (status IN ('PENDING', 'PUBLISHED', 'ARCHIVED')),
     rejection_reason TEXT
-    );
+);
 
 CREATE TABLE IF NOT EXISTS promotion
 (
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS promotion
     created_by  UUID         NOT NULL REFERENCES client (id),
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_archived BOOLEAN   DEFAULT FALSE
-    );
+);
 
 CREATE TABLE IF NOT EXISTS promotion_client
 (
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS promotion_client
     client_id    UUID      NOT NULL REFERENCES client (id),
     end_date     TIMESTAMP NOT NULL,
     qr_code      TEXT
-    );
+);
 
 CREATE TABLE IF NOT EXISTS inaccuracy
 (
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS inaccuracy
     description TEXT NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     resolved    BOOLEAN   DEFAULT FALSE
-    );
+);
 
 ----------------
 -- PROCEDURES --
@@ -172,8 +172,8 @@ CREATE OR REPLACE FUNCTION assign_promotion_to_user(
 ) RETURNS VOID AS
 $$
 BEGIN
-INSERT INTO promotion_client (promotion_id, client_id, end_date, qr_code)
-VALUES (p_promotion_id, p_client_id, p_end_date, p_qr_code);
+    INSERT INTO promotion_client (promotion_id, client_id, end_date, qr_code)
+    VALUES (p_promotion_id, p_client_id, p_end_date, p_qr_code);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -184,9 +184,9 @@ CREATE OR REPLACE PROCEDURE resolve_inaccuracy(
 AS
 $$
 BEGIN
-UPDATE inaccuracy
-SET resolved = TRUE
-WHERE id = p_inaccuracy_id;
+    UPDATE inaccuracy
+    SET resolved = TRUE
+    WHERE id = p_inaccuracy_id;
 END;
 $$;
 
@@ -199,7 +199,7 @@ CREATE OR REPLACE FUNCTION hash_password_before_insert()
 $$
 BEGIN
     NEW.password := crypt(NEW.password, gen_salt('bf')); -- Хешируем пароль с использованием Blowfish (bcrypt)
-RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -214,7 +214,7 @@ CREATE OR REPLACE FUNCTION update_review_timestamp()
 $$
 BEGIN
     NEW.updated_at := CURRENT_TIMESTAMP;
-RETURN NEW;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -222,21 +222,21 @@ CREATE TRIGGER before_update_review
     BEFORE UPDATE
     ON review
     FOR EACH ROW
-    EXECUTE FUNCTION update_review_timestamp();
+EXECUTE FUNCTION update_review_timestamp();
 
 CREATE OR REPLACE FUNCTION prevent_client_deletion()
     RETURNS TRIGGER AS
 $$
 DECLARE
-car_count INT;
+    car_count INT;
 BEGIN
-SELECT COUNT(*) INTO car_count FROM car WHERE user_id = OLD.id;
+    SELECT COUNT(*) INTO car_count FROM car WHERE user_id = OLD.id;
 
-IF car_count > 0 THEN
+    IF car_count > 0 THEN
         RAISE EXCEPTION 'Cannot delete user with active cars';
-END IF;
+    END IF;
 
-RETURN OLD;
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 

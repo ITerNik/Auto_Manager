@@ -4,6 +4,11 @@ import { ErrorPage } from "./pages/error";
 import { ProfilePage } from "./pages/profile";
 import {AuthPage} from "./pages/auth";
 import {ProtectedRoute} from "./pages/auth/ProtectedRoute.tsx";
+import {CarsPage} from "./pages/car";
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import {ServicesPage} from "./pages/catalogue";
 
 const App = () => <RouterProvider router={router} />;
 
@@ -42,6 +47,14 @@ const router = createBrowserRouter([
             path: "/profile",
             element: <ProfilePage />,
           },
+          {
+            path: '/cars',
+            element: <CarsPage />
+          },
+          {
+            path: '/services',
+            element: <ServicesPage />
+          }
         ]
       },
     ],
