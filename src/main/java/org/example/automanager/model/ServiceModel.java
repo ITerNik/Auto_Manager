@@ -1,17 +1,23 @@
 package org.example.automanager.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "service")
 @Data
-public class Service {
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ServiceModel {
 
     @Id
     @UuidGenerator
@@ -23,7 +29,7 @@ public class Service {
     private ServiceType serviceType;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -34,7 +40,4 @@ public class Service {
 
     @ManyToMany(mappedBy = "services")
     private Set<Client> clients;
-
-    @ManyToMany(mappedBy = "favoriteServices")
-    private Set<Client> likedClients;
 }

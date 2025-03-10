@@ -60,16 +60,7 @@ public class Client implements UserDetails {
             joinColumns = @JoinColumn(name = "client_id"), // Column in join table referencing Client
             inverseJoinColumns = @JoinColumn(name = "service_id") // Column in join table referencing Service
     )
-    private Set<Service> services;
-
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(
-            name = "client_favorite_service", // The name of the join table
-            joinColumns = @JoinColumn(name = "client_id"), // Column in join table referencing Client
-            inverseJoinColumns = @JoinColumn(name = "service_id") // Column in join table referencing Service
-    )
-    private Set<Service> favoriteServices;
+    private Set<ServiceModel> services;
 
     @ManyToMany
     @JoinTable(

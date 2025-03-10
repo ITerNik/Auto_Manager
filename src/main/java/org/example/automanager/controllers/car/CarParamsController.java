@@ -1,5 +1,6 @@
 package org.example.automanager.controllers.car;
 
+import lombok.RequiredArgsConstructor;
 import org.example.automanager.dto.auth.car.CarParams;
 import org.example.automanager.dto.auth.car.CarParamsResponse;
 import org.springframework.http.ResponseEntity;
@@ -8,14 +9,11 @@ import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/params")
 public class CarParamsController {
     private final RestClient client;
-
-    public CarParamsController() {
-        this.client = RestClient.create();
-    }
 
     private List<CarParams> getAll() {
         return client.get()
@@ -27,10 +25,10 @@ public class CarParamsController {
 
     @GetMapping("/makes")
     public ResponseEntity<?> getMakes() {
-       return ResponseEntity.ok().body(
-               this.getAll()
-               .stream()
-               .map((CarParams::getCar)));
+        return ResponseEntity.ok().body(
+                this.getAll()
+                        .stream()
+                        .map((CarParams::getCar)));
     }
 
     @GetMapping("/models")
