@@ -33,7 +33,7 @@ export class APIService {
     async getCover(query: string) {
         return axios.get(`https://api.unsplash.com/search/photos?query=${query}&page=1`, {
             headers: {
-                Authorization: 'Client-ID 0p2CCvyo-22g4o7-YKXssFlbn-eeNzY0umhDogagXbM77'
+                Authorization: 'Client-ID 0p2CCvyo-22g4o7-YKXssFlbn-eeNzY0umhDogagXbM'
             }
         })
             .then((res) => (res?.data?.results?.[0]?.urls?.raw ?? DEFAULT_COVER) + '&w=400&h=300&fit=crop')
@@ -72,5 +72,19 @@ export class APIService {
         return axios.post(`cars/`, car, {
             headers: this.getAuthHeaders()
         });
+    }
+
+    async getPlaces(latitude, longitude, radius, type) {
+        return axios.get(`http://localhost:8080/api/places/range?latitude=${latitude}&longitude=${longitude}&r=${radius}&types=${type ?? ''}`, {
+            headers: this.getAuthHeaders()
+        })
+    }
+
+    async getReviews() {
+        return Promise.resolve([
+            { id: 1, author: "Иван", rating: 4, description: "Отличный сервис!", status: "published" },
+            { id: 2, author: "Мария", rating: 5, description: "Очень довольна!", status: "published" },
+            { id: 3, author: "Андрей", rating: 3, description: "Нормально, но есть нюансы", status: "draft" },
+        ]);
     }
 }

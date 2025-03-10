@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS place
     latitude        FLOAT       NOT NULL,
     longitude       FLOAT       NOT NULL,
     address_id      UUID        NOT NULL REFERENCES address (id),
-    type            VARCHAR(32) NOT NULL CHECK (type IN ('Электрическая заправка', 'Автосервис', 'Автомойка', 'Заправка')),
+    type            VARCHAR(32) NOT NULL CHECK (type IN ('GAS_STATION', 'ELECTRIC_REFUELING', 'CAR_WASH', 'CAR_SERVICE')),
     address_comment TEXT
 );
 
@@ -146,6 +146,26 @@ CREATE TABLE IF NOT EXISTS inaccuracy
 -- PROCEDURES --
 ----------------
 
+CREATE OR REPLACE FUNCTION is_place_exists(p_name VARCHAR, p_type VARCHAR, p_address_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+RETURN EXISTS (
+    SELECT 1 FROM place
+    WHERE name = p_name AND type = p_type AND address_id = p_address_id
+);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_place_by_name_type_address(p_name VARCHAR, p_type VARCHAR, p_address_id UUID)
+RETURNS SETOF place AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM place
+WHERE name = p_name AND type = p_type AND address_id = p_address_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE PROCEDURE update_review_status(
     p_review_id UUID,
     p_status VARCHAR,
@@ -155,11 +175,11 @@ CREATE OR REPLACE PROCEDURE update_review_status(
 AS
 $$
 BEGIN
-UPDATE review
-SET status           = p_status,
-    rejection_reason = p_rejection_reason,
-    updated_at       = CURRENT_TIMESTAMP
-WHERE id = p_review_id;
+    UPDATE review
+    SET status           = p_status,
+        rejection_reason = p_rejection_reason,
+        updated_at       = CURRENT_TIMESTAMP
+    WHERE id = p_review_id;
 END;
 $$;
 

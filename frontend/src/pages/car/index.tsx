@@ -15,6 +15,9 @@ import Slider from "react-slick";
 import {APIService} from "../../../network/api.ts";
 import {CarFormData, CarForm} from "./CarForm.tsx";
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 export const CarsPage = () => {
     const [cars, setCars] = useState<CarFormData[]>([]);
 
@@ -30,10 +33,11 @@ export const CarsPage = () => {
             const updatedCars = await Promise.all(
                 cars.data.map(async (car) => ({
                     ...car,
-                    image: car.image || (await api.getCover(`${car.make} ${car.model}`)),
+                    image: car.image || (await api.getCover(`${car.car} ${car.carModel}`)),
                 }))
             );
             setCars(updatedCars);
+            console.log(updatedCars)
         };
 
         fetchImages();
