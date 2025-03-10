@@ -3,6 +3,7 @@ package org.example.automanager.services;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
+import org.example.automanager.controllers.service.DistanceCalculator;
 import org.example.automanager.controllers.service.PlaceApiConfig;
 import org.example.automanager.dto.service.Items;
 import org.example.automanager.dto.service.Result;
@@ -26,7 +27,7 @@ public class PlaceService {
     private final WebClient client;
 
     public Place save(Place place) {
-        if (!placeRepository.isPlaceExists(place.getName(), place.getType(), place.getAddress().getId()))
+        if (!placeRepository.isPlaceExists(place.getName(), place.getType().toString(), place.getAddress().getId()))
             return placeRepository.save(place);
         return placeRepository.getByNameTypeAndAddressId(
                 place.getName(),
@@ -52,7 +53,7 @@ public class PlaceService {
                                     address.setCity(getCityByCoordinates(longitude, latitude));
 
                                 address = addressService.save(address);
-                                return save(i.parsePlace(address, type));
+                                return save(i.parsePlace(address, PlaceType.fromStringStrict(type)));
                             }).toList()
                     ));
         }
@@ -83,7 +84,8 @@ public class PlaceService {
                 "&point=" + longitude + "," + latitude +
                 "&radius=" + r +
                 "&key=" + placeApiConfig.getKey() +
-                "&sort=distance";
+                "&sort=distance" +
+                "&fields=items.point";
 
         Result result = client.get()
                 .uri(uri)
@@ -99,6 +101,12 @@ public class PlaceService {
 
     public List<Place> findPlacesByNameContaining(String name, double longitude, double latitude) {
         List<Place> foundPlaces = placeRepository.findByNameContainingIgnoreCase(name);
+
+        foundPlaces.removeIf(fPlace -> DistanceCalculator.calculateDistance(
+                latitude, longitude,
+                fPlace.getLatitude(), fPlace.getLongitude()
+        ) > 5000);
+
         List<Place> newPlaces = new ArrayList<>();
 
         if (foundPlaces.size() < 10) {
@@ -129,7 +137,7 @@ public class PlaceService {
                                             address.setCity(getCityByCoordinates(longitude, latitude));
 
                                         address = addressService.save(address);
-                                        return save(i.parsePlace(address, placeType.toString()));
+                                        return save(i.parsePlace(address, placeType));
                                     })
                                     .collect(Collectors.toList())
                     ));

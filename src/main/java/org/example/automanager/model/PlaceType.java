@@ -17,7 +17,7 @@ public enum PlaceType {
 
     public static PlaceType fromStringStrict(String text) {
         return Arrays.stream(PlaceType.values())
-                .filter(placeType -> placeType.name().equalsIgnoreCase(text))
+                .filter(placeType -> placeType.displayName.equalsIgnoreCase(text))
                 .findFirst()
                 .orElse(null);
     }

@@ -6,6 +6,7 @@ import org.example.automanager.services.PlaceService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,4 +35,10 @@ public class PlaceController {
     ) {
         return ResponseEntity.ok().body(placeService.findPlacesByNameContaining(name, longitude, latitude));
     }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handler(Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 }

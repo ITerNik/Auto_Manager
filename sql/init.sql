@@ -51,16 +51,18 @@ CREATE TABLE IF NOT EXISTS address
 (
     id     UUID PRIMARY KEY,
     city   VARCHAR(32),
-    street VARCHAR(64) NOT NULL,
+    street VARCHAR(32) NOT NULL,
     house  VARCHAR(32) NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS place
 (
     id              UUID PRIMARY KEY,
-    name            VARCHAR(128) NOT NULL,
+    name            VARCHAR(64) NOT NULL,
+    latitude        FLOAT       NOT NULL,
+    longitude       FLOAT       NOT NULL,
     address_id      UUID        NOT NULL REFERENCES address (id),
-    type            VARCHAR(32) CHECK (type IN ('Заправка', 'Автомойка', 'Автосервис', 'Электрическая заправка')),
+    type            VARCHAR(32) NOT NULL CHECK (type IN ('Электрическая заправка', 'Автосервис', 'Автомойка', 'Заправка')),
     address_comment TEXT
     );
 
