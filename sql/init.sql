@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS place
     latitude        FLOAT       NOT NULL,
     longitude       FLOAT       NOT NULL,
     address_id      UUID        NOT NULL REFERENCES address (id),
-    type            VARCHAR(32) NOT NULL CHECK (type IN ('Электрическая заправка', 'Автосервис', 'Автомойка', 'Заправка')),
+    type            VARCHAR(32) NOT NULL CHECK (type IN ('GAS_STATION', 'ELECTRIC_REFUELING', 'CAR_WASH', 'CAR_SERVICE')),
     address_comment TEXT
     );
 
@@ -93,12 +93,12 @@ CREATE TABLE IF NOT EXISTS review
 (
     id               UUID PRIMARY KEY,
     client_id        UUID NOT NULL REFERENCES client (id),
-    service_id       UUID NOT NULL REFERENCES service (id),
+    place_id         UUID NOT NULL REFERENCES place (id),
     rating           INT CHECK (rating BETWEEN 1 AND 5),
     comment          TEXT,
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP,
-    status           VARCHAR(32) CHECK (status IN ('PENDING', 'PUBLISHED', 'ARCHIVED')),
+    status           VARCHAR(32) CHECK (status IN ('PENDING', 'PUBLISHED', 'ARCHIVED', 'DECLINED')),
     rejection_reason TEXT
     );
 

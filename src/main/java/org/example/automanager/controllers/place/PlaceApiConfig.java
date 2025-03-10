@@ -1,4 +1,4 @@
-package org.example.automanager.controllers.service;
+package org.example.automanager.controllers.place;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,4 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class PlaceApiConfig {
     @Value("${placeapi.key}")
     private String key;
+
+    @Value("${placeapi.url}")
+    private String url;
 }

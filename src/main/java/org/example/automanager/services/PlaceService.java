@@ -3,8 +3,8 @@ package org.example.automanager.services;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
-import org.example.automanager.controllers.service.DistanceCalculator;
-import org.example.automanager.controllers.service.PlaceApiConfig;
+import org.example.automanager.controllers.place.DistanceCalculator;
+import org.example.automanager.controllers.place.PlaceApiConfig;
 import org.example.automanager.dto.service.Items;
 import org.example.automanager.dto.service.Result;
 import org.example.automanager.model.Place;
@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,7 +62,7 @@ public class PlaceService {
     }
 
     private String getCityByCoordinates(double longitude, double latitude) {
-        String uri = "https://catalog.api.2gis.com/3.0/items/geocode?" +
+        String uri = placeApiConfig.getUrl() + "/geocode?" +
                 "lon=" + longitude +
                 "&lat=" + latitude +
                 "&fields=items.adm_div,items.address&type=adm_div.city" +
@@ -78,7 +79,7 @@ public class PlaceService {
     }
 
     private List<Items> getPlaceInRangeByType(String type, double longitude, double latitude, int r) {
-        String uri = "https://catalog.api.2gis.com/3.0/items?" +
+        String uri = placeApiConfig.getUrl() + "?" +
                 "q=" + type +
                 "&type=branch" +
                 "&point=" + longitude + "," + latitude +
@@ -143,5 +144,12 @@ public class PlaceService {
                     ));
         }
         return newPlaces;
+    }
+
+    public Place findById(UUID uuid){
+        var place = placeRepository.findById(uuid);
+        if (place.isPresent())
+            return place.get();
+        throw new IllegalArgumentException("Cannot find place!");
     }
 }

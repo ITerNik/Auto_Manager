@@ -1,4 +1,4 @@
-package org.example.automanager.dto.auth.car;
+package org.example.automanager.dto.car;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

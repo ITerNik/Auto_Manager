@@ -1,8 +1,8 @@
 package org.example.automanager.controllers.car;
 
 import lombok.RequiredArgsConstructor;
-import org.example.automanager.dto.auth.car.CarParams;
-import org.example.automanager.dto.auth.car.CarParamsResponse;
+import org.example.automanager.dto.car.CarParams;
+import org.example.automanager.dto.car.CarParamsResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;

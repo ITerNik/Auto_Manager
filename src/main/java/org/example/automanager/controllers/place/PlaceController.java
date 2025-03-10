@@ -1,4 +1,4 @@
-package org.example.automanager.controllers.service;
+package org.example.automanager.controllers.place;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

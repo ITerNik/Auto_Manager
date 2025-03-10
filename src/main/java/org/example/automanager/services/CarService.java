@@ -1,7 +1,7 @@
 package org.example.automanager.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.automanager.dto.auth.car.CarInfoRequest;
+import org.example.automanager.dto.car.CarInfoRequest;
 import org.example.automanager.model.Car;
 import org.example.automanager.model.Client;
 import org.example.automanager.repository.CarRepository;

@@ -2,7 +2,7 @@ package org.example.automanager.controllers.car;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.automanager.dto.auth.car.CarInfoRequest;
+import org.example.automanager.dto.car.CarInfoRequest;
 import org.example.automanager.model.Car;
 import org.example.automanager.services.CarService;
 import org.springframework.http.ResponseEntity;

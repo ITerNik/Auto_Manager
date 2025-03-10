@@ -1,4 +1,4 @@
-package org.example.automanager.controllers.service;
+package org.example.automanager.controllers.place;
 
 import java.lang.Math;
 

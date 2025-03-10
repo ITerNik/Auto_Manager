@@ -1,4 +1,4 @@
-package org.example.automanager.dto.auth.car;
+package org.example.automanager.dto.car;
 
 import lombok.Builder;
 import lombok.Getter;
