@@ -1,7 +1,10 @@
 package org.example.automanager.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
@@ -9,6 +12,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "place")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Place {
 
     @Id

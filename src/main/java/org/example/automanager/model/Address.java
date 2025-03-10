@@ -4,14 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "address")
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Address {
 
     @Id
@@ -19,15 +22,13 @@ public class Address {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "city", length = 32, nullable = false)
+    @Setter
+    @Column(name = "city", length = 32)
     private String city;
 
     @Column(name = "street", length = 32, nullable = false)
     private String street;
 
     @Column(name = "house", nullable = false)
-    private Integer house;
-
-    @Column(name = "building", nullable = false)
-    private Integer building;
+    private String house;
 }

@@ -49,20 +49,19 @@ CREATE TABLE IF NOT EXISTS service_notification
 
 CREATE TABLE IF NOT EXISTS address
 (
-    id       UUID PRIMARY KEY,
-    city     VARCHAR(32) NOT NULL,
-    street   VARCHAR(32) NOT NULL,
-    house    INT         NOT NULL,
-    building INT         NOT NULL
+    id     UUID PRIMARY KEY,
+    city   VARCHAR(32),
+    street VARCHAR(32) NOT NULL,
+    house  VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS place
 (
-    id             UUID PRIMARY KEY,
-    name           VARCHAR(64) NOT NULL,
-    address_id     UUID        NOT NULL REFERENCES address (id),
-    type           VARCHAR(32) NOT NULL CHECK (type IN ('GAS_STATION', 'ELECTRIC_REFUELING', 'CAR_WASH', 'CAR_SERVICE')),
-    adress_comment TEXT
+    id              UUID PRIMARY KEY,
+    name            VARCHAR(64) NOT NULL,
+    address_id      UUID        NOT NULL REFERENCES address (id),
+    type            VARCHAR(32) NOT NULL CHECK (type IN ('GAS_STATION', 'ELECTRIC_REFUELING', 'CAR_WASH', 'CAR_SERVICE')),
+    address_comment TEXT
 );
 
 CREATE TABLE IF NOT EXISTS service

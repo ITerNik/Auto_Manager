@@ -87,7 +87,7 @@ public class AuthenticationService {
             if (!passwordEncoder.matches(oldPassword, client.getPassword()))
                 throw new IllegalArgumentException("Password is incorrect!");
 
-            client.setPassword(passwordEncoder.encode(oldPassword));
+            client.setPassword(passwordEncoder.encode(newPassword));
         }
 
         if (newSurname != null) client.setSurname(newSurname);

@@ -33,7 +33,7 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    private ServiceModel service;
 
     @Column(name = "rejection_reason", columnDefinition = "TEXT")
     private String rejectionReason;
