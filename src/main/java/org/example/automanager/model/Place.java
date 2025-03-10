@@ -29,6 +29,12 @@ public class Place {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
+    @Column(name = "latitude", nullable = false)
+    private double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private double longitude;
+
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PlaceType type;

@@ -18,6 +18,7 @@ public class Items {
     private String addressName;
     @JsonProperty("full_name")
     private String fullName;
+    private Point point;
     private String id;
     private String name;
     private String type;
@@ -42,11 +43,13 @@ public class Items {
         return Address.builder().build();
     }
 
-    public Place parsePlace(Address address, String placeType) {
+    public Place parsePlace(Address address, PlaceType placeType) {
         return Place.builder()
                 .name(name)
+                .latitude(point.getLat())
+                .longitude(point.getLon())
                 .address(address)
-                .type(PlaceType.fromStringStrict(placeType))
+                .type(placeType)
                 .addressComment(addressComment)
                 .build();
     }
