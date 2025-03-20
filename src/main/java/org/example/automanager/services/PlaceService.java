@@ -11,7 +11,7 @@ import org.example.automanager.model.Place;
 import org.example.automanager.model.PlaceType;
 import org.example.automanager.repository.PlaceRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final AddressService addressService;
     private final PlaceApiConfig placeApiConfig;
-    private final WebClient client;
+    private final RestClient client;
 
     public Place save(Place place) {
         if (!placeRepository.isPlaceExists(place.getName(), place.getType().toString(), place.getAddress().getId()))
@@ -70,8 +70,7 @@ public class PlaceService {
         Result result = client.get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(Result.class)
-                .block();
+                .body(Result.class);
 
         assert result != null;
         return result.getResult().getServices().get(0).getFullName();
@@ -90,8 +89,7 @@ public class PlaceService {
         Result result = client.get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(Result.class)
-                .block();
+                .body(Result.class);
 
         assert result != null;
         return Objects.nonNull(result.getResult()) ?

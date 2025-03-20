@@ -22,7 +22,7 @@ public class PlaceController {
             @RequestParam("r") @Valid int r,
             @RequestParam("latitude") @Valid double latitude,
             @RequestParam("longitude") @Valid double longitude,
-            @RequestParam("types") @Valid String[] q
+            @RequestParam(value = "types", defaultValue = "Автосервис") @Valid String[] q
     ) {
         return ResponseEntity.ok().body(placeService.getAllPlacesInRange(q, longitude, latitude, r));
     }
@@ -40,5 +40,4 @@ public class PlaceController {
     public ResponseEntity<String> handler(Exception e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
-
 }

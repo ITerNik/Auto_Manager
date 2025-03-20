@@ -3,6 +3,7 @@ package org.example.automanager.dto.auth;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,5 +14,5 @@ public class ClientInfoResponse {
     private String name;
     private String surname;
     private String email;
-    private LocalDateTime birthday;
+    private LocalDate birthday;
 }

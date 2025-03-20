@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,15 +26,15 @@ public class CarParamsController {
     }
 
     @GetMapping("/makes")
-    public ResponseEntity<?> getMakes() {
-        return ResponseEntity.ok().body(
-                this.getAll()
-                        .stream()
-                        .map((CarParams::getCar)));
+    public ResponseEntity<Set<String>> getMakes() {
+       return ResponseEntity.ok().body(
+               this.getAll()
+               .stream()
+               .map((CarParams::getCar)).collect(Collectors.toSet()));
     }
 
     @GetMapping("/models")
-    public ResponseEntity<?> getModels(
+    public ResponseEntity<Set<String>> getModels(
             @RequestParam(value = "make", required = false) String make
     ) {
         List<CarParams> cars = this.getAll();
@@ -43,7 +45,7 @@ public class CarParamsController {
         }
 
         return ResponseEntity.ok().body(cars.stream()
-                .map(CarParams::getCarModel));
+                .map(CarParams::getCarModel).collect(Collectors.toSet()));
 
     }
 

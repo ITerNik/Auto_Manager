@@ -7,8 +7,31 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.Set;
 import java.util.UUID;
 
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(
+                name = "is_place_exists",
+                procedureName = "is_place_exists",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_name", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_type", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_address_id", type = UUID.class),
+                        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "result", type = Boolean.class)
+                }
+        ),
+        @NamedStoredProcedureQuery(
+                name = "get_place_by_name_type_address",
+                procedureName = "get_place_by_name_type_address",
+                resultClasses = Place.class,
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_name", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_type", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_address_id", type = UUID.class)
+                }
+        )
+})
 @Entity
 @Table(name = "place")
 @Data

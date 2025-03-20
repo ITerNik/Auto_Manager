@@ -1,5 +1,6 @@
 package org.example.automanager.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -9,7 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -47,11 +48,12 @@ public class Client implements UserDetails {
     private Role role;
 
     @Column(name = "birthday")
-    private LocalDateTime birthday;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate birthday;
 
     @Builder.Default
     @Column(name = "is_blocked", nullable = false)
-    private Boolean isBlocked = false; // Default value
+    private Boolean isBlocked = false;
 
     @ManyToMany
     @JsonIgnore
